@@ -1,0 +1,39 @@
+{
+  "name": "jsub",
+  "version": "0.0.0",
+  "description": "JavaScript subset for creating formulas.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
+    "coveralls": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SimpliField/jsub.git"
+  },
+  "keywords": [
+    "js",
+    "subset",
+    "formulas"
+  ],
+  "author": "Nicolas Froidure (Simplifield)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SimpliField/jsub/issues"
+  },
+  "devDependencies": {
+    "mocha": "~2.2.5",
+    "mocha-lcov-reporter": "0.0.2",
+    "coveralls": "~2.11.2",
+    "istanbul": "~0.3.17"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "esprima": "^2.4.1",
+    "yerror": "^1.0.1"
+  }
+}
