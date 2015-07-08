@@ -11,7 +11,7 @@ First, require jsub:
 ```js
 var jsub = require('jsub');
 
-var myScript = '2 * (fruits.length - vegetables.length)';
+var myScript = '2 * (lengthOf('fruits') - lengthOf('vegetables'))';
 var myOptions = {
   context: {
     categories: {
@@ -26,20 +26,16 @@ var myOptions = {
     }
   }, {
     type: 'BinaryExpression',
-    operator: { $in: ['+', '-'] }
+    operator: ['*', '-']
   }, {
-    type: 'LogicalExpression',,
-    operator: { $in: ['||', '&&'] }
-  }, {
-    type: 'LitteralExpression',
-    value : {
-      $and: [
-        /([0-9]{1,5}|false|true)/,
-        function matchLitteral(value) {
-          return 'number' === typeof value ||
-            'boolean' === typeof value;
-        }
-      ]
+    type: 'CallExpression',
+    '$_': function(expression) {
+      return expression.callee &&
+        'Identifier' === expression.callee.type &&
+        'lengthOf' === expression.callee.name &&
+        1 === expression.arguments.length &&
+        'Literal' === expression.arguments[0].type &&
+        /^fruits|vegetables$/.test(expression.arguments[0].value);
     }
   }]
 };
@@ -49,6 +45,26 @@ jsub(myScript, myOptions);
 // []
 // returns an empty array since there is no syntax violation
 
+```
+
+You can now run my script safely!
+
+```js
+
+var myScript = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
+console.log((new Function(
+  'var fruits = this.fruits;\n' +
+  'var vegetables = this.vegetables;\n' +
+  'var lengthOf = this.lengthOf;\n' +
+  'return (' + myScript + ');'
+)).call({
+  vegetables: [],
+  fruites: [],
+  lengthOf: function(arr) {
+    return arr.length;
+  }
+}));
+// -8
 ```
 
 ## API
