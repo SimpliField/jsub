@@ -79,8 +79,6 @@ describe('jsub', function() {
         }, {
           type: 'ExpressionStatement'
         }, {
-          type: 'Program'
-        }, {
           type: 'BinaryExpression',
           operator: ['>', '<', '+', '==']
         }, {
@@ -101,6 +99,43 @@ describe('jsub', function() {
           }
         }]
       });
+      assert.equal(errors.length, 0);
+    });
+
+    it('should work with the README sample', function() {
+      var myScript = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
+      var myOptions = {
+        context: {
+          categories: {
+            fruits: [],
+            vegetables: []
+          }
+        },
+        conditions: [{
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'BinaryExpression',
+          operator: ['*', '-']
+        }, {
+          type: 'Literal',
+          raw: /^[0-9]{1,5}$/
+        }, {
+          type: 'CallExpression',
+          '$_': function(expression) {
+            return expression.callee &&
+              'Identifier' === expression.callee.type &&
+              'lengthOf' === expression.callee.name &&
+              1 === expression.arguments.length &&
+              'Literal' === expression.arguments[0].type &&
+              /^fruits|vegetables$/.test(expression.arguments[0].value);
+          }
+        }]
+      };
+
+
+      var errors = jsub(myScript, myOptions);
       assert.equal(errors.length, 0);
     });
 

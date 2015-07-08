@@ -11,7 +11,7 @@ First, require jsub:
 ```js
 var jsub = require('jsub');
 
-var myScript = '2 * (lengthOf('fruits') - lengthOf('vegetables'))';
+var myScript = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
 var myOptions = {
   context: {
     categories: {
@@ -20,13 +20,15 @@ var myOptions = {
     }
   },
   conditions: [{
-    type: 'MemberExpression',
-    _: function memberExpressionChecker(node, parents) {
-      // WIP...
-    }
+    type: 'Program'
+  }, {
+    type: 'ExpressionStatement'
   }, {
     type: 'BinaryExpression',
     operator: ['*', '-']
+  }, {
+    type: 'Literal',
+    raw: /^[0-9]{1,5}$/
   }, {
     type: 'CallExpression',
     '$_': function(expression) {
@@ -39,7 +41,6 @@ var myOptions = {
     }
   }]
 };
-
 
 jsub(myScript, myOptions);
 // []
