@@ -54,6 +54,11 @@ function checkCondition(condition, index, expression) {
       if(!condition[property].test(expression[property])) {
         error = new YError('E_NO_MATCH', condition[property], expression[property]);
       }
+    // Array based condition
+    } else if(condition[property] instanceof Array) {
+      if(-1 === condition[property].indexOf(expression[property])) {
+        error = new YError('E_NO_MATCH', condition[property], expression[property]);
+      }
     // Expression check based condition
     } else if('$_' === property) {
       if(!(condition[property] instanceof Function)) {

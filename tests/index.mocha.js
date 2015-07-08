@@ -53,6 +53,25 @@ describe('jsub', function() {
       assert.equal(errors.length, 0);
     });
 
+    it('should work with array conds', function() {
+      var errors = jsub('3 + 9 * 5 - 6', {
+        conditions: [{
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'Program'
+        }, {
+          type: 'BinaryExpression',
+          operator: ['+', '-', '*', '/']
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/
+        }]
+      });
+      assert.equal(errors.length, 0);
+    });
+
   });
 
   describe('with unautorized contents', function() {
