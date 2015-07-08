@@ -19,7 +19,7 @@ var myOptions = {
       vegetables: []
     }
   },
-  allow: [{
+  conditions: [{
     type: 'MemberExpression',
     _: function memberExpressionChecker(node, parents) {
       // WIP...
@@ -33,14 +33,13 @@ var myOptions = {
   }, {
     type: 'LitteralExpression',
     value : {
-      $and: [{
-        $match: /([0-9]{1,5}|false|true)/
-      }, {
+      $and: [
+        /([0-9]{1,5}|false|true)/,
         function matchLitteral(value) {
           return 'number' === typeof value ||
             'boolean' === typeof value;
         }
-      }]
+      ]
     }
   }]
 };

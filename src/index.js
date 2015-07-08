@@ -56,7 +56,7 @@ function checkCondition(condition, index, expression) {
       }
     // Bad condition property
     } else {
-      error = new YError('E_BAD_CONDITION_PROPERTY', condition, property, condition[property]);
+      throw new YError('E_BAD_CONDITION_PROPERTY', condition, property, condition[property]);
     }
     if(null !== error) {
       debug('Property check:', property, 'led to', error);

@@ -67,6 +67,28 @@ describe('jsub', function() {
       assert.equal(errors.length, 4);
     });
 
+    it('should throw when conds aren\'t recognized', function() {
+      assert.throws(function() {
+        jsub('1 + 1', {
+          conditions: [{
+            ahah: null
+          }, {
+            type: 'Program'
+          }, {
+            type: 'ExpressionStatement'
+          }, {
+            type: 'Program'
+          }, {
+            type: 'BinaryExpression',
+            operator: '-' // Here
+          }, {
+            type: 'Literal',
+            raw: /([0-9]{1,5}|false|true)/
+          }]
+        });
+      });
+    });
+
   });
 
 });
