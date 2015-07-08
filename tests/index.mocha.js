@@ -72,6 +72,38 @@ describe('jsub', function() {
       assert.equal(errors.length, 0);
     });
 
+    it('should work with complexer nested expressions', function() {
+      var errors = jsub('(taskValue("abbacacaabbacacaabbacaca") > 1  || taskValue("abbacacaabbacacaabbacaca") < 2) && (1+2 == 3)', {
+        conditions: [{
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'Program'
+        }, {
+          type: 'BinaryExpression',
+          operator: ['>', '<', '+', '==']
+        }, {
+          type: 'LogicalExpression',
+          operator: ['||', '&&']
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/
+        }, {
+          type: 'CallExpression',
+          '$_': function(expression) {
+            return expression.callee &&
+              'Identifier' === expression.callee.type &&
+              'taskValue' === expression.callee.name &&
+              1 === expression.arguments.length &&
+              'Literal' === expression.arguments[0].type &&
+              /^([0-9a-f]{24})$/.test(expression.arguments[0].value);
+          }
+        }]
+      });
+      assert.equal(errors.length, 0);
+    });
+
   });
 
   describe('with unautorized contents', function() {
