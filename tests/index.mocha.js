@@ -18,7 +18,36 @@ describe('jsub', function() {
           operator: '+'
         }, {
           type: 'Literal',
-          raw: /([0-9]{1,5}|false|true)/
+          raw: /^([0-9]{1,5}|false|true)$/
+        }]
+      });
+      assert.equal(errors.length, 0);
+    });
+
+    it('should work with defined functions calls', function() {
+      var errors = jsub('1 + 1 + taskValue("abbacacaabbacacaabbacaca")', {
+        conditions: [{
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'Program'
+        }, {
+          type: 'BinaryExpression',
+          operator: '+'
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/
+        }, {
+          type: 'CallExpression',
+          '$_': function(expression) {
+            return expression.callee &&
+              'Identifier' === expression.callee.type &&
+              'taskValue' === expression.callee.name &&
+              1 === expression.arguments.length &&
+              'Literal' === expression.arguments[0].type &&
+              /^([0-9a-f]{24})$/.test(expression.arguments[0].value);
+          }
         }]
       });
       assert.equal(errors.length, 0);
@@ -41,7 +70,7 @@ describe('jsub', function() {
           operator: '-' // Here
         }, {
           type: 'Literal',
-          raw: /([0-9]{1,5}|false|true)/
+          raw: /^([0-9]{1,5}|false|true)$/
         }]
       });
       assert.equal(errors.length, 2);
@@ -60,10 +89,9 @@ describe('jsub', function() {
           operator: '+'
         }, {
           type: 'Literal',
-          raw: /(false|true)/ // Here
+          raw: /^(false|true)$/ // Here
         }]
       });
-      console.log(errors);
       assert.equal(errors.length, 4);
     });
 
@@ -83,7 +111,7 @@ describe('jsub', function() {
             operator: '-' // Here
           }, {
             type: 'Literal',
-            raw: /([0-9]{1,5}|false|true)/
+            raw: /^([0-9]{1,5}|false|true)$/
           }]
         });
       });
