@@ -127,6 +127,25 @@ describe('jsub', function() {
       assert.equal(errors.length, 2);
     });
 
+    it('should fail when trying to access window', function() {
+      var errors = jsub('document.cookies;', {
+        conditions: [{
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'Program'
+        }, {
+          type: 'BinaryExpression',
+          operator: '-' // Here
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/
+        }]
+      });
+      assert.equal(errors.length, 2);
+    });
+
     it('should fail when some regExp conds aren\'t matching', function() {
       var errors = jsub('1 + 1', {
         conditions: [{
