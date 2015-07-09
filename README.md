@@ -48,7 +48,7 @@ jsub(myScript, myOptions);
 
 ```
 
-You can now run my script safely!
+You can now run your script safely!
 
 ```js
 
