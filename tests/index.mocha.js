@@ -12,8 +12,6 @@ describe('jsub', function() {
         }, {
           type: 'ExpressionStatement'
         }, {
-          type: 'Program'
-        }, {
           type: 'BinaryExpression',
           operator: '+'
         }, {
@@ -30,8 +28,6 @@ describe('jsub', function() {
           type: 'Program'
         }, {
           type: 'ExpressionStatement'
-        }, {
-          type: 'Program'
         }, {
           type: 'BinaryExpression',
           operator: '+'
@@ -59,8 +55,6 @@ describe('jsub', function() {
           type: 'Program'
         }, {
           type: 'ExpressionStatement'
-        }, {
-          type: 'Program'
         }, {
           type: 'BinaryExpression',
           operator: ['+', '-', '*', '/']
@@ -150,8 +144,6 @@ describe('jsub', function() {
         }, {
           type: 'ExpressionStatement'
         }, {
-          type: 'Program'
-        }, {
           type: 'BinaryExpression',
           operator: '-' // Here
         }, {
@@ -169,8 +161,6 @@ describe('jsub', function() {
         }, {
           type: 'ExpressionStatement'
         }, {
-          type: 'Program'
-        }, {
           type: 'BinaryExpression',
           operator: '-' // Here
         }, {
@@ -187,8 +177,6 @@ describe('jsub', function() {
           type: 'Program'
         }, {
           type: 'ExpressionStatement'
-        }, {
-          type: 'Program'
         }, {
           type: 'BinaryExpression',
           operator: '+'
@@ -209,8 +197,6 @@ describe('jsub', function() {
             type: 'Program'
           }, {
             type: 'ExpressionStatement'
-          }, {
-            type: 'Program'
           }, {
             type: 'BinaryExpression',
             operator: '-' // Here
