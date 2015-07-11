@@ -1,12 +1,12 @@
 # jsub
 > JavaScript subset to build formulas.
 
-
-[![NPM version](https://badge.fury.io/js/jsub.png)](https://npmjs.org/package/jsub) [![Build status](https://secure.travis-ci.org/SimpliField/jsub.png)](https://travis-ci.org/SimpliField/jsub) [![Dependency Status](https://david-dm.org/SimpliField/jsub.png)](https://david-dm.org/SimpliField/jsub) [![devDependency Status](https://david-dm.org/SimpliField/jsub/dev-status.png)](https://david-dm.org/SimpliField/jsub#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/SimpliField/jsub/badge.png?branch=master)](https://coveralls.io/r/SimpliField/jsub?branch=master) [![Code Climate](https://codeclimate.com/github/SimpliField/jsub.png)](https://codeclimate.com/github/SimpliField/jsub)
+[![NPM version](https://badge.fury.io/js/jsub.svg)](https://npmjs.org/package/jsub) [![Build status](https://secure.travis-ci.org/SimpliField/jsub.svg)](https://travis-ci.org/SimpliField/jsub) [![Dependency Status](https://david-dm.org/SimpliField/jsub.svg)](https://david-dm.org/SimpliField/jsub) [![devDependency Status](https://david-dm.org/SimpliField/jsub/dev-status.svg)](https://david-dm.org/SimpliField/jsub#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/SimpliField/jsub/badge.svg?branch=master)](https://coveralls.io/r/SimpliField/jsub?branch=master) [![Code Climate](https://codeclimate.com/github/SimpliField/jsub.svg)](https://codeclimate.com/github/SimpliField/jsub)
 
 ## Usage
 
-First, require jsub:
+Simply require `jsub` and test your scripts against your own JavaScript sub
+ syntax definition:
 
 ```js
 var jsub = require('jsub');
@@ -48,24 +48,28 @@ jsub(myScript, myOptions);
 
 ```
 
-You can now run your script safely!
+You can now run your script safely without having to sandbow it!
 
 ```js
-
 var myScript = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
-console.log((new Function(
+
+var myContext = {
+  vegetables: ['salad', 'potato'],
+  fruits: ['cherry'],
+  lengthOf: function(arrayName) {
+    return myContext[arrayName].length;
+  }
+};
+
+myFunction = new Function(
   'var fruits = this.fruits;\n' +
   'var vegetables = this.vegetables;\n' +
   'var lengthOf = this.lengthOf;\n' +
   'return (' + myScript + ');'
-)).call({
-  vegetables: [],
-  fruites: [],
-  lengthOf: function(arr) {
-    return arr.length;
-  }
-}));
-// -8
+);
+
+console.log(myFunction.call(myContext));
+// -2
 ```
 
 ## API
@@ -78,4 +82,3 @@ Parse the given `script` according to the `options`, returns an array
 ## Stats
 [![NPM](https://nodei.co/npm/jsub.png?downloads=true&stars=true)](https://nodei.co/npm/jsub/)
 [![NPM](https://nodei.co/npm-dl/jsub.png)](https://nodei.co/npm/jsub/)
-
