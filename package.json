@@ -1,7 +1,7 @@
 {
   "name": "jsub",
   "version": "0.0.0",
-  "description": "JavaScript subset for creating formulas.",
+  "description": "JavaScript library to create JavaScript subsets",
   "main": "src/index.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
@@ -26,14 +26,14 @@
     "url": "https://github.com/SimpliField/jsub/issues"
   },
   "devDependencies": {
-    "mocha": "~2.2.5",
-    "mocha-lcov-reporter": "0.0.2",
     "coveralls": "~2.11.2",
-    "istanbul": "~0.3.17"
+    "esprima": "^2.7.2",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "mocha-lcov-reporter": "^1.2.0"
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "esprima": "^2.4.1",
     "yerror": "^1.0.1"
   }
 }

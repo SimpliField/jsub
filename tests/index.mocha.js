@@ -1,12 +1,19 @@
 var assert = require('assert');
 var jsub = require('../src');
+var esprima = require('esprima');
+
+function getErrorCode(error) {
+  return error.code;
+}
 
 describe('jsub', function() {
 
   describe('with autorized contents', function() {
 
     it('should work with simple arithmetics', function() {
-      var errors = jsub('1 + 1', {
+      var script = '1 + 1';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -18,12 +25,18 @@ describe('jsub', function() {
           type: 'Literal',
           raw: /^([0-9]{1,5}|false|true)$/
         }]
-      });
-      assert.equal(errors.length, 0);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast),
+        []
+      );
     });
 
     it('should work with defined functions calls', function() {
-      var errors = jsub('1 + 1 + taskValue("abbacacaabbacacaabbacaca")', {
+      var script = '1 + 1 + taskValue("abbacacaabbacacaabbacaca")';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -45,12 +58,18 @@ describe('jsub', function() {
               /^([0-9a-f]{24})$/.test(expression.arguments[0].value);
           }
         }]
-      });
-      assert.equal(errors.length, 0);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast),
+        []
+      );
     });
 
     it('should work with array conds', function() {
-      var errors = jsub('3 + 9 * 5 - 6', {
+      var script = '3 + 9 * 5 - 6';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -62,12 +81,19 @@ describe('jsub', function() {
           type: 'Literal',
           raw: /^([0-9]{1,5}|false|true)$/
         }]
-      });
-      assert.equal(errors.length, 0);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast),
+        []
+      );
     });
 
     it('should work with complexer nested expressions', function() {
-      var errors = jsub('(taskValue("abbacacaabbacacaabbacaca") > 1  || taskValue("abbacacaabbacacaabbacaca") < 2) && (1+2 == 3)', {
+      var script = '(taskValue("abbacacaabbacacaabbacaca") > 1  ||' +
+        ' taskValue("abbacacaabbacacaabbacaca") < 2) && (1+2 == 3)';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -92,13 +118,18 @@ describe('jsub', function() {
               /^([0-9a-f]{24})$/.test(expression.arguments[0].value);
           }
         }]
-      });
-      assert.equal(errors.length, 0);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast),
+        []
+      );
     });
 
     it('should work with the README sample', function() {
-      var myScript = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
-      var myOptions = {
+      var script = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         context: {
           categories: {
             fruits: [],
@@ -128,9 +159,10 @@ describe('jsub', function() {
         }]
       };
 
-
-      var errors = jsub(myScript, myOptions);
-      assert.equal(errors.length, 0);
+      assert.deepEqual(
+        jsub(syntax, ast),
+        []
+      );
     });
 
   });
@@ -138,7 +170,9 @@ describe('jsub', function() {
   describe('with unautorized contents', function() {
 
     it('should fail when some simple value conds aren\'t matching', function() {
-      var errors = jsub('1 + 1', {
+      var script = '1 + 1';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -150,12 +184,17 @@ describe('jsub', function() {
           type: 'Literal',
           raw: /^([0-9]{1,5}|false|true)$/
         }]
-      });
-      assert.equal(errors.length, 2);
+      };
+      assert.deepEqual(
+        jsub(syntax, ast).map(getErrorCode),
+        ['E_BAD_EXPRESSION', 'E_BAD_EXPRESSION']
+      );
     });
 
     it('should fail when trying to access window', function() {
-      var errors = jsub('document.cookies;', {
+      var script = 'document.cookies;';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -167,12 +206,18 @@ describe('jsub', function() {
           type: 'Literal',
           raw: /^([0-9]{1,5}|false|true)$/
         }]
-      });
-      assert.equal(errors.length, 2);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast).map(getErrorCode),
+        ['E_BAD_EXPRESSION', 'E_BAD_EXPRESSION']
+      );
     });
 
     it('should fail when some regExp conds aren\'t matching', function() {
-      var errors = jsub('1 + 1', {
+      var script = '1 + 1';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
         conditions: [{
           type: 'Program'
         }, {
@@ -184,27 +229,37 @@ describe('jsub', function() {
           type: 'Literal',
           raw: /^(false|true)$/ // Here
         }]
-      });
-      assert.equal(errors.length, 4);
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast).map(getErrorCode),
+        [
+          'E_BAD_EXPRESSION', 'E_BAD_EXPRESSION',
+          'E_BAD_EXPRESSION', 'E_BAD_EXPRESSION'
+        ]
+      );
     });
 
     it('should throw when conds aren\'t recognized', function() {
+      var script = '1 + 1';
+      var ast = esprima.parse(script, {loc: true});
+      var syntax = {
+        conditions: [{
+          ahah: null
+        }, {
+          type: 'Program'
+        }, {
+          type: 'ExpressionStatement'
+        }, {
+          type: 'BinaryExpression',
+          operator: '-' // Here
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/
+        }]
+      };
       assert.throws(function() {
-        jsub('1 + 1', {
-          conditions: [{
-            ahah: null
-          }, {
-            type: 'Program'
-          }, {
-            type: 'ExpressionStatement'
-          }, {
-            type: 'BinaryExpression',
-            operator: '-' // Here
-          }, {
-            type: 'Literal',
-            raw: /^([0-9]{1,5}|false|true)$/
-          }]
-        });
+        jsub(syntax, ast);
       });
     });
 

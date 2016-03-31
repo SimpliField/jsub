@@ -1,10 +1,8 @@
-var esprima = require('esprima');
 var YError = require('yerror');
 var debug = require('debug')('jsub');
 
-function jsub(script, options) {
-  var syntax = esprima.parse(script, {loc: true});
-  return checkExpression([], options.conditions || [], syntax);
+function jsub(options, ast) {
+  return checkExpression([], options.conditions || [], ast);
 }
 
 function checkExpression(errors, conditions, expression) {
@@ -79,4 +77,3 @@ function checkCondition(condition, index, expression) {
 }
 
 module.exports = jsub;
-
