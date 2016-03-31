@@ -1,6 +1,6 @@
 {
   "name": "jsub",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "JavaScript library to create JavaScript subsets",
   "main": "src/index.js",
   "scripts": {
