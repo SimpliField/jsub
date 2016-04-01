@@ -1,3 +1,5 @@
+'use strict';
+
 var YError = require('yerror');
 var debug = require('debug')('jsub');
 
@@ -7,10 +9,12 @@ function jsub(options, ast) {
 
 function checkExpression(errors, conditions, expression) {
   var expressionErrors = [];
+
   debug('Checking expression:', expression);
   // Check alls conditions
-  conditions.some(function(condition, index) {
+  conditions.some(function checkConditions(condition, index) {
     var conditionErrors = checkCondition(condition, index, expression);
+
     debug('Condition check of:', condition, ' led to ', conditionErrors.length, ' errors.');
     if(conditionErrors.length) {
       expressionErrors = expressionErrors.concat(conditionErrors);
@@ -20,16 +24,21 @@ function checkExpression(errors, conditions, expression) {
     }
   });
   if(expressionErrors.length) {
-    errors.push(new YError('E_BAD_EXPRESSION', expression, expressionErrors.length, expressionErrors));
+    errors.push(new YError(
+      'E_BAD_EXPRESSION',
+      expression,
+      expressionErrors.length,
+      expressionErrors
+    ));
   }
   // Check child expressions
-  if('Program' == expression.type) {
-    errors = expression.body.reduce(function(errors, expression) {
+  if('Program' === expression.type) {
+    errors = expression.body.reduce(function processProgram(errors, expression) {
       return errors.concat(checkExpression(errors, conditions, expression));
     }, errors);
-  } else if('ExpressionStatement' == expression.type) {
+  } else if('ExpressionStatement' === expression.type) {
     errors = checkExpression(errors, conditions, expression.expression);
-  } else if('BinaryExpression' == expression.type) {
+  } else if('BinaryExpression' === expression.type) {
     errors = checkExpression(errors, conditions, expression.left);
     errors = checkExpression(errors, conditions, expression.right);
   }
@@ -38,8 +47,10 @@ function checkExpression(errors, conditions, expression) {
 
 function checkCondition(condition, index, expression) {
   var errors = [];
-  Object.keys(condition).forEach(function(property) {
+
+  Object.keys(condition).forEach(function checkConditionKey(property) {
     var error = null;
+
     // Simple value based condition
     if(-1 !== ['boolean', 'string', 'number'].indexOf(typeof condition[property])) {
       if(condition[property] !== expression[property]) {
