@@ -23,21 +23,24 @@ var syntax = {
   context: {
     categories: {
       fruits: [],
-      vegetables: []
-    }
+      vegetables: [],
+    },
   },
   conditions: [{
-    type: 'Program'
+    type: 'Program',
   }, {
-    type: 'ExpressionStatement'
+    type: 'ExpressionStatement',
   }, {
     type: 'BinaryExpression',
-    operator: ['*', '-']
+    operator: ['*', '-'],
   }, {
     type: 'Literal',
-    raw: /^[0-9]{1,5}$/
+    raw: /^[0-9]{1,5}$/,
   }, {
     type: 'CallExpression',
+    // The $_ property creates a custom parser that will by-pass the actual
+    // jsub embedded child expression checker. You should use this extremely
+    // carefully and heavily test it
     '$_': function(expression) {
       return expression.callee &&
         'Identifier' === expression.callee.type &&
@@ -45,8 +48,8 @@ var syntax = {
         1 === expression.arguments.length &&
         'Literal' === expression.arguments[0].type &&
         /^fruits|vegetables$/.test(expression.arguments[0].value);
-    }
-  }]
+    },
+  }],
 };
 
 var javaScriptSubset = jsub.bind(syntax);
@@ -72,7 +75,7 @@ var context = {
   fruits: ['cherry'],
   lengthOf: function(arrayName) {
     return context[arrayName].length;
-  }
+  },
 };
 
 runFunction = new Function(
