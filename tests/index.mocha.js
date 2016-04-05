@@ -195,7 +195,7 @@ describe('jsub', function() {
     });
 
     it('should fallback to security', function() {
-      var script = 'add(1, 1)';
+      var script = 'if(1) {}';
       var ast = esprima.parse(script, { loc: true });
       var syntax = {
         conditions: [{
@@ -203,7 +203,11 @@ describe('jsub', function() {
         }, {
           type: 'ExpressionStatement',
         }, {
-          type: 'CallExpression',
+          type: 'Identifier',
+        }, {
+          type: 'BlockStatement',
+        }, {
+          type: 'IfStatement',
         }, {
           type: 'Literal',
           raw: /^([0-9]{1,5}|false|true)$/,
@@ -235,7 +239,11 @@ describe('jsub', function() {
 
       assert.deepEqual(
         jsub(syntax, ast).map(getErrorCode),
-        ['E_BAD_EXPRESSION', 'E_BAD_EXPRESSION']
+        [
+          'E_BAD_EXPRESSION', 'E_BAD_EXPRESSION',
+          'E_BAD_EXPRESSION', 'E_BAD_EXPRESSION',
+          'E_BAD_EXPRESSION', 'E_BAD_EXPRESSION',
+        ]
       );
     });
 

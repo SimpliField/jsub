@@ -36,6 +36,7 @@ function checkExpression(errors, conditions, expression) {
   if(conditions.some(function(condition) {
     return condition.type === expression.type && condition.$_;
   })) {
+    debug('Child expression cancelled with a custom parser:', expression);
     return errors;
   }
   // Check child expressions
@@ -57,6 +58,19 @@ function checkExpression(errors, conditions, expression) {
     errors = checkExpression(errors, conditions, expression.test);
     errors = checkExpression(errors, conditions, expression.consequent);
     errors = checkExpression(errors, conditions, expression.alternate);
+  } else if('NewExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.callee);
+    errors = expression.arguments.reduce(function(errors, expression) {
+      return errors.concat(checkExpression(errors, conditions, expression));
+    }, errors);
+  } else if('MemberExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.object);
+    errors = checkExpression(errors, conditions, expression.property);
+  } else if('CallExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.callee);
+    errors = expression.arguments.reduce(function(errors, expression) {
+      return errors.concat(checkExpression(errors, conditions, expression));
+    }, errors);
   } else if(-1 === ['Identifier', 'Literal'].indexOf(expression.type)) {
     errors = [new YError('E_UNHANDLED_EXPRESSION', expression.type)];
   }
