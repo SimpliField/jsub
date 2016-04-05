@@ -194,6 +194,28 @@ describe('jsub', function() {
       );
     });
 
+    it('should fallback to security', function() {
+      var script = 'add(1, 1)';
+      var ast = esprima.parse(script, { loc: true });
+      var syntax = {
+        conditions: [{
+          type: 'Program',
+        }, {
+          type: 'ExpressionStatement',
+        }, {
+          type: 'CallExpression',
+        }, {
+          type: 'Literal',
+          raw: /^([0-9]{1,5}|false|true)$/,
+        }],
+      };
+
+      assert.deepEqual(
+        jsub(syntax, ast).map(getErrorCode),
+        ['E_UNHANDLED_EXPRESSION']
+      );
+    });
+
     it('should fail when trying to access window', function() {
       var script = 'document.cookies;';
       var ast = esprima.parse(script, { loc: true });

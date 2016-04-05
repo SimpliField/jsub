@@ -31,6 +31,13 @@ function checkExpression(errors, conditions, expression) {
       expressionErrors
     ));
   }
+  // By-pass child expressions checking when having a custom parser
+  // Warning: Using this feature may cause security issues!
+  if(conditions.some(function(condition) {
+    return condition.type === expression.type && condition.$_;
+  })) {
+    return errors;
+  }
   // Check child expressions
   if('Program' === expression.type) {
     errors = expression.body.reduce(function processProgram(errors, expression) {
@@ -41,6 +48,17 @@ function checkExpression(errors, conditions, expression) {
   } else if('BinaryExpression' === expression.type) {
     errors = checkExpression(errors, conditions, expression.left);
     errors = checkExpression(errors, conditions, expression.right);
+  } else if('LogicalExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.left);
+    errors = checkExpression(errors, conditions, expression.right);
+  } else if('UnaryExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.argument);
+  } else if('ConditionalExpression' === expression.type) {
+    errors = checkExpression(errors, conditions, expression.test);
+    errors = checkExpression(errors, conditions, expression.consequent);
+    errors = checkExpression(errors, conditions, expression.alternate);
+  } else if(-1 === ['Identifier', 'Literal'].indexOf(expression.type)) {
+    errors = [new YError('E_UNHANDLED_EXPRESSION', expression.type)];
   }
   return errors;
 }
