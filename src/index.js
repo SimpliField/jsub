@@ -80,42 +80,58 @@ function checkExpression(errors, conditions, expression) {
 function checkCondition(condition, index, expression) {
   var errors = [];
 
-  Object.keys(condition).forEach(function checkConditionKey(property) {
-    var error = null;
+  if(!condition.type) {
+    throw new Error('E_NO_CONDITION_TYPE');
+  }
 
-    // Simple value based condition
-    if(-1 !== ['boolean', 'string', 'number'].indexOf(typeof condition[property])) {
-      if(condition[property] !== expression[property]) {
-        error = new YError('E_DIFFERENT_VALUES', condition[property], expression[property]);
-      }
-    // RegExp based condition
-    } else if(condition[property] instanceof RegExp) {
-      if(!condition[property].test(expression[property])) {
-        error = new YError('E_NO_MATCH', condition[property], expression[property]);
-      }
-    // Array based condition
-    } else if(condition[property] instanceof Array) {
-      if(-1 === condition[property].indexOf(expression[property])) {
-        error = new YError('E_NO_MATCH', condition[property], expression[property]);
-      }
-    // Expression check based condition
-    } else if('$_' === property) {
-      if(!(condition[property] instanceof Function)) {
-        throw new YError('E_BAD_EXPRESSION_CHECKER', property, condition[property]);
-      }
-      if(!condition[property](expression)) {
-        error = new YError('E_NO_MATCH', condition[property], expression[property]);
-      }
-    // Bad condition property
-    } else {
-      throw new YError('E_BAD_CONDITION_PROPERTY', condition, property, condition[property]);
-    }
-    if(null !== error) {
-      debug('Property check:', property, 'led to', error);
-      errors.push(property);
-    }
-  });
+  // Always check type first
+  errors = checkConditionKey(condition, expression, errors, 'type');
 
+  // If type doesn't match, do not parse the all condition keys
+  if(errors.length) {
+    return errors;
+  }
+
+  // Add other checks
+  errors = Object.keys(condition)
+    .filter(function(key) {
+      return 'type' !== key;
+    })
+    .reduce(checkConditionKey.bind(null, condition, expression), errors);
+
+  return errors;
+}
+
+function checkConditionKey(condition, expression, errors, property) {
+
+  // Simple value based condition
+  if(-1 !== ['boolean', 'string', 'number'].indexOf(typeof condition[property])) {
+    if(condition[property] !== expression[property]) {
+      errors.push(new YError('E_DIFFERENT_VALUES', condition[property], expression[property]));
+    }
+  // RegExp based condition
+  } else if(condition[property] instanceof RegExp) {
+    if(!condition[property].test(expression[property])) {
+      errors.push(new YError('E_NO_MATCH', condition[property], expression[property]));
+    }
+  // Array based condition
+  } else if(condition[property] instanceof Array) {
+    if(-1 === condition[property].indexOf(expression[property])) {
+      errors.push(new YError('E_NO_MATCH', condition[property], expression[property]));
+    }
+  // Expression check based condition
+  } else if('$_' === property) {
+    if(!(condition[property] instanceof Function)) {
+      throw new YError('E_BAD_EXPRESSION_CHECKER', property, condition[property]);
+    }
+    errors = errors.concat(condition[property](expression));
+  // Bad condition property
+  } else {
+    throw new YError('E_BAD_CONDITION_PROPERTY', condition, property, condition[property]);
+  }
+  if(errors.length) {
+    debug('Property check:', property, 'led to', errors);
+  }
   return errors;
 }
 

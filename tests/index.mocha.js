@@ -57,7 +57,9 @@ describe('jsub', function() {
               'taskValue' === expression.callee.name &&
               1 === expression.arguments.length &&
               'Literal' === expression.arguments[0].type &&
-              (/^([0-9a-f]{24})$/).test(expression.arguments[0].value);
+              (/^([0-9a-f]{24})$/).test(expression.arguments[0].value) ?
+              [] :
+              [new Error('E_UNEXPECTED')];
           },
         }],
       };
@@ -117,7 +119,9 @@ describe('jsub', function() {
               'taskValue' === expression.callee.name &&
               1 === expression.arguments.length &&
               'Literal' === expression.arguments[0].type &&
-              (/^([0-9a-f]{24})$/).test(expression.arguments[0].value);
+              (/^([0-9a-f]{24})$/).test(expression.arguments[0].value) ?
+              [] :
+              [new Error('E_UNEXPECTED')];
           },
         }],
       };
@@ -156,7 +160,9 @@ describe('jsub', function() {
               'lengthOf' === expression.callee.name &&
               1 === expression.arguments.length &&
               'Literal' === expression.arguments[0].type &&
-              (/^fruits|vegetables$/).test(expression.arguments[0].value);
+              (/^fruits|vegetables$/).test(expression.arguments[0].value) ?
+              [] :
+              [new Error('E_UNEXPECTED')];
           },
         }],
       };
