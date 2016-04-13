@@ -40,32 +40,53 @@ var syntax = {
     type: 'CallExpression',
     // The $_ property creates a custom parser that will by-pass the actual
     // jsub embedded child expression checker. You should use this extremely
-    // carefully and heavily test it
+    // carefully and heavily test it. It must return an array of errors that
+    // prevented the rule to apply, empty if it successfully applied.
     '$_': function(expression) {
-      return expression.callee &&
-        'Identifier' === expression.callee.type &&
-        'lengthOf' === expression.callee.name &&
-        1 === expression.arguments.length &&
-        'Literal' === expression.arguments[0].type &&
-        /^fruits|vegetables$/.test(expression.arguments[0].value);
+      // Check function name
+      if(
+        (!expression.callee) ||
+        'Identifier' !== expression.callee.type ||
+        'lengthOf' !== expression.callee.name
+      ) {
+        return [new Error('E_BAD_FUNCTION_NAME')];
+      }
+      if(
+        1 !== expression.arguments.length ||
+        'Literal' !== expression.arguments[0].type ||
+        !/^fruits|vegetables$/.test(expression.arguments[0].value)
+      ) {
+        return [new Error('E_BAD_FUNCTION_ARGS')];
+      }
+      return [];
+    },
+  }, {
+    type: 'CallExpression',
+    // The $_ property is also usefull to check sub syntaxes
+    '$_': function(expression) {
+      return jsub.bind(null, {
+        type: 'Literal',
+        raw: /^[0-9]{1,5}$/,
+      });
     },
   }],
 };
 
-var javaScriptSubset = jsub.bind(syntax);
+var checkJavaScriptSubset = jsub.bind(null, syntax);
 
 var script = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
 
 var javaScriptAST = esprima.parse(script);
 
-javaScriptSubset(javaScriptAST);
+checkJavaScriptSubset(javaScriptAST);
 // []
 // returns an empty array since there is no syntax violation
 
 ```
 
-Since `jsub` fallbacks to security, you can now run your script safely without
- having to sandbox it!
+`jsub` uses a white list to check every AST node of your application so it
+  fallbacks to security, you can now run your script safely without having to
+  sandbox it!
 
 ```js
 var script = '2 * (lengthOf("fruits") - lengthOf("vegetables"))';
