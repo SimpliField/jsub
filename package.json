@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "coveralls": "~2.11.2",
-    "eslint": "^1.9.0",
-    "eslint-config-simplifield": "^1.1.0",
-    "esprima": "^2.7.2",
+    "eslint": "^3.4.0",
+    "eslint-config-simplifield": "^4.1.1",
+    "esprima": "^3.0.0",
     "istanbul": "^0.4.2",
-    "mocha": "^2.4.5",
+    "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0"
   },
   "dependencies": {
