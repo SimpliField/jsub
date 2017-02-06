@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "debug": "^2.4.0",
-    "yerror": "^1.0.1"
+    "yerror": "^2.0.0"
   }
 }
