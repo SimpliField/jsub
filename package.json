@@ -30,7 +30,7 @@
   "devDependencies": {
     "coveralls": "~2.11.2",
     "eslint": "^3.4.0",
-    "eslint-config-simplifield": "^4.1.1",
+    "eslint-config-simplifield": "^5.1.0",
     "esprima": "^3.0.0",
     "istanbul": "^0.4.2",
     "mocha": "^3.0.2",
