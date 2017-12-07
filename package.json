@@ -11,7 +11,7 @@
     "preversion": "npm run lint && npm test"
   },
   "engines": {
-    "node": ">= 4"
+    "node": ">=6"
   },
   "repository": {
     "type": "git",
