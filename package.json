@@ -28,16 +28,16 @@
     "url": "https://github.com/SimpliField/jsub/issues"
   },
   "devDependencies": {
-    "coveralls": "~2.11.2",
-    "eslint": "^3.4.0",
-    "eslint-config-simplifield": "^4.1.1",
-    "esprima": "^3.0.0",
+    "coveralls": "~3.0.0",
+    "eslint": "^4.13.0",
+    "eslint-config-simplifield": "^7.0.1",
+    "esprima": "^4.0.0",
     "istanbul": "^0.4.2",
-    "mocha": "^3.0.2",
+    "mocha": "^4.0.1",
     "mocha-lcov-reporter": "^1.2.0"
   },
   "dependencies": {
-    "debug": "^2.4.0",
+    "debug": "^3.1.0",
     "yerror": "^2.1.0"
   }
 }
